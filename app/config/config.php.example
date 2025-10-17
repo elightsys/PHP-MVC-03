@@ -1,0 +1,39 @@
+<?php
+// PHP DEBUG SHOW
+define('DEBUG', true); // false || true
+
+error_reporting(E_ALL);
+ini_set('display_errors', DEBUG ? 1 : 0);
+
+// Improved HTTPS detection for proxy/load balancer environments
+$is_https = false;
+if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+    $is_https = true;
+} elseif (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    $is_https = true;
+} elseif (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on') {
+    $is_https = true;
+} elseif (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) {
+    $is_https = true;
+}
+
+$root = ($is_https ? "https://" : "http://") . $_SERVER['HTTP_HOST'];
+$script_name = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+
+define ('__ROOT_URL__', substr(str_replace('/public','',$root.$script_name),0,-1)); // URL
+define('__ROOT_APP__', dirname(dirname(__FILE__))); // APP
+
+// PAGE NAME
+define ('__SITE_NAME__', 'My MVC 03');
+
+//Database params
+define('__DB_HOST__', 'localhost'); // Your database host
+define('__DB_USER__', 'your_db_username'); // Your database username
+define('__DB_PASS__', 'your_db_password'); // Your database password
+define('__DB_NAME__', 'your_db_name'); // Your database name
+define('__DB_CHARSET__', 'utf8mb4');
+
+define('__INV_CODE__', '01010101');
+
+// Generate a unique ID for security: md5(uniqid(rand(), true))
+define('__UNIQID__', 'your_unique_security_key_here');
