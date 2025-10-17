@@ -1,0 +1,40 @@
+name: PHP Linting
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  php-lint:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        php-versions: ['7.4', '8.0', '8.1', '8.2']
+    
+    name: PHP ${{ matrix.php-versions }} Syntax Check
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: mbstring, pdo, pdo_mysql
+        coverage: none
+    
+    - name: Validate composer.json (if exists)
+      run: |
+        if [ -f composer.json ]; then
+          composer validate --strict
+        fi
+    
+    - name: Check PHP syntax errors
+      run: |
+        find . -type f -name '*.php' ! -path './vendor/*' -exec php -l {} \; | (! grep -v "No syntax errors detected" )
+    
+    - name: Display PHP version
+      run: php -v
